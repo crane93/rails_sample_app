@@ -3,7 +3,8 @@ require "test_helper"
 class UserTest < ActiveSupport::TestCase
 
   def setup #各テストが走る直前に実行される
-    @user = User.new(name: "Example User", email: "user@example.com") #すべてのテスト内でこのインスタンス変数が使えるようになります
+    @user = User.new(name: "Example User", email: "user@example.com",
+                    password: "foobar", password_confirmation: "foobar") #すべてのテスト内でこのインスタンス変数が使えるようになります
   end
 
   test "should be valid" do #Userオブジェクトの有効性をテスト
@@ -61,5 +62,15 @@ class UserTest < ActiveSupport::TestCase
     @user.email = mixed_case_email
     @user.save
     assert_equal mixed_case_email.downcase, @user.reload.email
+  end
+
+  test "password should be present (nonblank)" do
+    @user.password = @user.password_confirmation = " " * 6 #多重代入（Multiple Assignment）
+    assert_not @user.valid?
+  end
+
+  test "password should have a minimum length" do
+    @user.password = @user.password_confirmation = "a" * 5
+    assert_not @user.valid?
   end
 end
