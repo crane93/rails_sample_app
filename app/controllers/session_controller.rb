@@ -17,5 +17,7 @@ class SessionController < ApplicationController
   end
 
   def destroy
+    log_out
+    redirect_to root_url, status: :see_other #303 See Other
   end
 end
