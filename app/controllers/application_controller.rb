@@ -1,5 +1,3 @@
 class ApplicationController < ActionController::Base
-  def hello
-    render html: "hi"
-  end
+  include SessionHelper #複数のコントローラからログイン関連のメソッドを呼び出せるようにするため
 end
