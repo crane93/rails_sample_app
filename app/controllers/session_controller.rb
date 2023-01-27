@@ -7,6 +7,8 @@ class SessionController < ApplicationController
     if user && user.authenticate(params[:session][:password])
       # ユーザーログイン後にユーザー情報のページにリダイレクトする
       reset_session #セッション固定攻撃への対策
+      remember user
+      params[:session][:remember_me] == '1' ? remember(user) : forget(user)
       log_in user
       redirect_to user
     else
@@ -17,7 +19,7 @@ class SessionController < ApplicationController
   end
 
   def destroy
-    log_out
+    log_out if logged_in?
     redirect_to root_url, status: :see_other #303 See Other
   end
 end
