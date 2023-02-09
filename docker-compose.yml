@@ -2,13 +2,8 @@ version: '3.8'
 services:
   web:
     container_name: 'web'
-    user: $DOCKER_UID:$DOCKER_GID
     build:
       context: .
-      args:
-        UID: $DOCKER_UID
-        GID: $DOCKER_GID
-        UNAME: $USER
     tty: true
     working_dir: '/usr/src/app'
     volumes:
