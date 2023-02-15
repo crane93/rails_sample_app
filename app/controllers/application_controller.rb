@@ -1,3 +1,3 @@
 class ApplicationController < ActionController::Base
-  include SessionHelper #複数のコントローラからログイン関連のメソッドを呼び出せるようにするため
+  include SessionsHelper #複数のコントローラからログイン関連のメソッドを呼び出せるようにするためApplicationControllerに記述
 end
