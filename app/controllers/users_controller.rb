@@ -14,7 +14,7 @@ class UsersController < ApplicationController
       reset_session
       log_in @user
       flash[:success] = "Welcome to the Sample App!" #登録完了後、画面上に表示する歓迎メッセージ、flashの変数にキーを:successにするのが一般
-      redirect_to @user #redirect_to user_url(@user)の略
+      redirect_to @user #ユーザー登録に成功した場合、新しいテンプレートに遷移させるよりリダイレクトするのが一般, redirect_to user_url(@user)の略
     else
       render 'new', status: :unprocessable_entity #HTTPステータスコード422 Unprocessable Entity
     end

@@ -7,7 +7,7 @@ class UserTest < ActiveSupport::TestCase
                     password: "foobar", password_confirmation: "foobar") #すべてのテスト内でこのインスタンス変数が使えるようになります
   end
 
-  test "should be valid" do #Userオブジェクトの有効性をテスト
+  test "should be valid" do #Userオブジェクトの有効性をテスト、有効であればバリデーション確認を明確にすることができる
     assert @user.valid? #assert： 横の処理がtrueを返したら成功/falseを返したら失敗
   end
 
