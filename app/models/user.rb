@@ -7,7 +7,7 @@ class User < ApplicationRecord
             format: { with: VALID_EMAIL_REGEX },
             uniqueness: true
   has_secure_password
-  validates :password , presence: true, length: { minimum: 6 } #has_secure_passwordに存在性のバリデーションも含まれているが、'  'のような空白もOKと判断するため、ここで存在性のバリデーションを追加
+  validates :password , presence: true, length: { minimum: 6 }, allow_nil: true #has_secure_passwordに存在性のバリデーションも含まれているが、'  'のような空白もOKと判断するため、ここで存在性のバリデーションを追加
 
   # 渡された文字列のハッシュ値を返す
   def User.digest(string)
