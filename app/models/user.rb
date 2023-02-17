@@ -23,14 +23,14 @@ class User < ApplicationRecord
 
   # 永続セッションのためにユーザーをデータベースに記憶する
   def remember
-    self.remember_token = User.new_token
+    self.remember_token = User.new_token #selfをつけないとRubyはremember_tokenをローカル変数としてみる
     update_attribute(:remember_digest, User.digest(remember_token))
   end
 
   # 渡されたトークンがダイジェストと一致したらtrueを返す
-  def authenticated?(remember_token)
+  def authenticated?(remember_token) #remember_tokenはこのメソッドで使われるローカル変す、アクセサとは別のもの
     return false if remember_digest.nil?
-    BCrypt::Password.new(remember_digest).is_password?(remember_token) #self.remember_digest라는 뜻ㅎ
+    BCrypt::Password.new(remember_digest).is_password?(remember_token) #remember_digestの属性はデータベースのカラムに対応しているためActiveRecordで取得と保存が可能
   end
 
   # ユーザーのログイン情報を破棄する
