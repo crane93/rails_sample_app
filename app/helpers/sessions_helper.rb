@@ -53,4 +53,10 @@ module SessionsHelper
     reset_session
     @current_user = nil
   end
+
+  # アクセスしようとしたURLを保存する
+  def store_location
+    session[:forwarding_url] = request.original_url if request.get?
+    # debugger
+  end
 end
