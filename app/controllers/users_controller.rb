@@ -19,10 +19,9 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      reset_session
-      log_in @user
-      flash[:success] = "Welcome to the Sample App!" #登録完了後、画面上に表示する歓迎メッセージ、flashの変数にキーを:successにするのが一般
-      redirect_to @user #ユーザー登録に成功した場合、新しいテンプレートに遷移させるよりリダイレクトするのが一般, redirect_to user_url(@user)の略
+      UserMailer.account_activation(@user).deliver_now
+      flash[:info] = "Please check your email to activate your account."
+      redirect_to root_url
     else
       render 'new', status: :unprocessable_entity #HTTPステータスコード422 Unprocessable Entity
     end

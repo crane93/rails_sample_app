@@ -1,6 +1,7 @@
 class User < ApplicationRecord
-  attr_accessor :remember_token #가상의 속성
-  before_save { self.email = email.downcase } #オブジェクトが保存されるタイミングで処理を実行したいので、before_saveを利用、左のselfは省略不可
+  attr_accessor :remember_token, :activation_token #가상의 속성
+  before_save :downcase_email #オブジェクトが保存されるタイミングで処理を実行したいので、before_saveを利用、左のselfは省略不可
+  before_create :create_activation_digest # オブジェクトが生成される前に実行
   validates :name, presence: true, length: { maximum: 50 }  #validates라는 메소드에 인수 두개가 들어가있는 것, 두번째 인수는 オプションハッシュ이기때문에 波カッコ를 사용안했음
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i  #定数で定義
   validates :email, presence: true, length: { maximum: 255 }, 
@@ -35,13 +36,28 @@ class User < ApplicationRecord
   end
 
   # 渡されたトークンがダイジェストと一致したらtrueを返す
-  def authenticated?(remember_token) #remember_tokenはこのメソッドで使われるローカル変す、アクセサとは別のもの
-    return false if remember_digest.nil?
-    BCrypt::Password.new(remember_digest).is_password?(remember_token) #remember_digestの属性はデータベースのカラムに対応しているためActiveRecordで取得と保存が可能
+  def authenticated?(attribute, token) #tokenはこのメソッドで使われるローカル変す、アクセサとは別のもの
+    digest = send("#{attribute}_digest")
+    return false if digest.nil?
+    BCrypt::Password.new(digest).is_password?(token) #remember_digestの属性はデータベースのカラムに対応しているためActiveRecordで取得と保存が可能
   end
 
   # ユーザーのログイン情報を破棄する
   def forget
     update_attribute(:remember_digest, nil)
   end
+
+  # Userオブジェクトからアクセスできないメソッド達、Userオブジェクト内でのみ利用可
+  private
+
+    # メールアドレスをすべて小文字にする
+    def downcase_email
+      email.downcase!
+    end
+
+    # 有効化トークンとダイジェストを作成および代入する
+    def create_activation_digest
+      self.activation_token  = User.new_token
+      self.activation_digest = User.digest(activation_token)
+    end
 end
