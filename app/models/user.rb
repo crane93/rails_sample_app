@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  attr_accessor :remember_token, :activation_token #가상의 속성
+  attr_accessor :remember_token, :activation_token, :reset_token #가상의 속성
   before_save :downcase_email #オブジェクトが保存されるタイミングで処理を実行したいので、before_saveを利用、左のselfは省略不可
   before_create :create_activation_digest # オブジェクトが生成される前に実行
   validates :name, presence: true, length: { maximum: 50 }  #validates라는 메소드에 인수 두개가 들어가있는 것, 두번째 인수는 オプションハッシュ이기때문에 波カッコ를 사용안했음
@@ -59,6 +59,18 @@ class User < ApplicationRecord
     UserMailer.account_activation(self).deliver_now
   end
   
+  # パスワード再設定の属性を設定する
+  def create_reset_digest
+    self.reset_token = User.new_token
+    update_attribute(:reset_digest,  User.digest(reset_token))
+    update_attribute(:reset_sent_at, Time.zone.now)
+  end
+
+  # パスワード再設定のメールを送信する
+  def send_password_reset_email
+    UserMailer.password_reset(self).deliver_now
+  end
+
   # Userオブジェクトからアクセスできないメソッド達、Userオブジェクト内でのみ利用可
   private
 
