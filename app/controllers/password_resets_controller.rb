@@ -31,6 +31,7 @@ class PasswordResetsController < ApplicationController
     elsif @user.update(user_params) # Strong_parameters
       @user.forget
       reset_session
+      @user.update_attribute(:reset_digest, nil)
       log_in(@user)
       flash[:success] = "Password has been reset."
       redirect_to @user
