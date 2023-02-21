@@ -71,6 +71,10 @@ class User < ApplicationRecord
     UserMailer.password_reset(self).deliver_now
   end
 
+  # パスワードの再設定メールの有効期限が切れているか確認する
+  def password_reset_expired?
+    reset_sent_at < 2.hours.ago
+  end
   # Userオブジェクトからアクセスできないメソッド達、Userオブジェクト内でのみ利用可
   private
 
