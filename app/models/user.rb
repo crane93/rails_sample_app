@@ -1,5 +1,13 @@
 class User < ApplicationRecord
   has_many :microposts, dependent: :destroy
+  has_many :active_relationships, class_name:  "Relationship", #ActiveRelationshipsというモデルはない、そのためclass_nameでモデルのクラス名を明示的に表す
+                                  foreign_key: "follower_id", #followerというモデルクラスはない、なので外部キーをしっかり指定しておく
+                                  dependent:   :destroy
+  has_many :passive_relationships, class_name:  "Relationship",
+                                  foreign_key: "followed_id",
+                                  dependent:   :destroy
+  has_many :following, through: :active_relationships, source: :followed
+  has_many :followers, through: :passive_relationships
   attr_accessor :remember_token, :activation_token, :reset_token #가상의 속성
   before_save :downcase_email #オブジェクトが保存されるタイミングで処理を実行したいので、before_saveを利用、左のselfは省略不可
   before_create :create_activation_digest # オブジェクトが生成される前に実行
@@ -79,6 +87,21 @@ class User < ApplicationRecord
 
   def feed
     Micropost.where("user_id = ?", id)
+  end
+
+  # ユーザーをフォローする
+  def follow(other_user)
+    following << other_user unless self == other_user
+  end
+
+  # ユーザーをフォロー解除する
+  def unfollow(other_user)
+    following.delete(other_user)
+  end
+
+  # あるユーザーをフォローしていればtrueを返す
+  def following?(other_user)
+    following.include?(other_user)
   end
 
   # Userオブジェクトからアクセスできないメソッド達、Userオブジェクト内でのみ利用可
