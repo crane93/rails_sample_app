@@ -1,0 +1,15 @@
+one:
+  follower: michael #内部的に「user_id: 1」と自動的に変換される
+  followed: lana
+
+two:
+  follower: michael
+  followed: malory
+
+three:
+  follower: lana
+  followed: michael
+
+four:
+  follower: archer
+  followed: michael
